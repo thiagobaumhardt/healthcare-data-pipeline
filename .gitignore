@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.env
+.env.local
+
+# Airflow
+airflow_home/
+dags/__pycache__/
+logs/
+*.log
+
+# dbt
+target/
+dbt_packages/
+dbt_modules/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Data dumps
+*.csv
+*.parquet
+*.json
+*.db
+
+# Jupyter / Notebooks
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
