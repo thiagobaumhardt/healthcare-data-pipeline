@@ -1,7 +1,7 @@
 # Healthcare Data Project
 
 End-to-end Data Engineering pipeline for Healthcare data using **Terraform, Airflow and dbt**.  
-This project simulates US healthcare data ingestion and transformation, focusing on reproducibility and best practices for Data Engineering in healthcare.
+This project simulates healthcare data ingestion and transformation, focusing on reproducibility and best practices for Data Engineering in healthcare.
 
 ## Modules
 - **healthcare-terraform**: Infrastructure as Code (GCP buckets, datasets, service accounts).

@@ -18,11 +18,18 @@ It is designed for **learning, experimenting, and building Data Engineering pipe
 ## 📂 Project Structure
 
 ├── dags/ # Place your DAGs here
+
 │ └── example_dag.py # Sample DAG
+
 ├── plugins/ # Custom plugins
 ├── config/ # Custom configs
+
 ├── logs/ # Airflow logs (ignored in git)
+
 ├── docker-compose.yaml # Main Docker Compose file
+
 ├── .env.example # Example environment variables
+
 ├── .gitignore # Ignore logs, .env, pycache
+
 └── README.md # Project documentation
