@@ -37,3 +37,11 @@ dbt_modules/
 Thumbs.db
 .vscode/
 .idea/
+
+#Keys
+
+keys/
+
+#Venv
+
+venv/
