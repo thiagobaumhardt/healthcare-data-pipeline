@@ -69,7 +69,7 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    _PIP_ADDITIONAL_REQUIREMENTS: -r /opt/airflow/requirements.txt
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
@@ -77,6 +77,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ./requirements.txt:/opt/airflow/requirements.txt
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -291,7 +292,7 @@ services:
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
-      _PIP_ADDITIONAL_REQUIREMENTS: ''
+      _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     user: "0:0"
 
   airflow-cli:
@@ -330,6 +331,56 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    # --- 🧩 AIRBYTE ---
+  airbyte-db:
+    image: postgres:13
+    container_name: airbyte-db
+    environment:
+      - POSTGRES_USER=airbyte
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=airbyte
+    volumes:
+      - airbyte-db-volume:/var/lib/postgresql/data
+    restart: always
+
+  airbyte-server:
+    image: airbyte/server:1.8.0
+    container_name: airbyte-server
+    ports:
+      - "8000:8000"
+    environment:
+      - AIRBYTE_ROLE=server
+    depends_on:
+      - airbyte-db
+  airbyte-worker:
+    image: airbyte:lastest
+    container_name: airbyte-worker
+    environment:
+      - AIRBYTE_ROLE=worker
+      - DATABASE_HOST=airbyte-db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=airbyte
+      - DATABASE_PASSWORD=password
+      - DATABASE_DB=airbyte
+      - AIRBYTE_API_URL=http://airbyte-server:8000
+    depends_on:
+      - airbyte-server
+      - airbyte-db
+    restart: always
+
+  airbyte-api:
+    image: airbyte/api:lastest
+    container_name: airbyte-api
+    ports:
+      - "8001:8001"
+    environment:
+      - AIRBYTE_API_URL=http://airbyte-server:8000
+    depends_on:
+      - airbyte-server
+
+
 
 volumes:
   postgres-db-volume:
+  airbyte-db-volume:
+
