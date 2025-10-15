@@ -11,5 +11,6 @@ provider "google" {
 
   project = "healthcare-460623"
   region  = "us-central1"
+  credentials = file("keys/terraform-sa.json")
 }
 
