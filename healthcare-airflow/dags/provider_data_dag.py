@@ -1,27 +1,34 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-import utils
-import json
-import os
 
+from datetime import datetime, timedelta
 
-with open("/opt/airflow/dags/tables.json") as f:
-    TABLES_CONFIG = json.load(f)
+def extract():
+    print('extrair')
 
+def list():
+    print('listar')
 
-def extract_data(table_name, **kwargs):
-    cfg = TABLES_CONFIG[table_name]
-    url = cfg["endpoint"]
-    
 
 with DAG(
     "Provider Data DAG",
-    default_args=utils.default_args,
     description="Extract",
     schedule_interval="0 7 * * *",  # every 7pm
-    start_date=utils.datetime(2025, 10, 1),
+    retries=1
+    start_date=datetime(2025, 10, 1),
     catchup=False,
-    tags=["healthcare"],
+    tags=["healthcare"]
 ) as dag:
 
+    
+    task1 = PythonOperator (
+        taskid='Extract',
+        python_callable=extract
+    )
 
+    task2 = PythonOperator (
+        taskid='List',
+        python_callable=list
+    )
+
+    task1 > task2

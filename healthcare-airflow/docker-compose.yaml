@@ -197,30 +197,3 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  # --- Airbyte Containers ---
-  airbyte-db:
-    image: postgres:13
-    container_name: airbyte-db
-    environment:
-      POSTGRES_USER: airbyte
-      POSTGRES_PASSWORD: airbyte
-      POSTGRES_DB: airbyte
-    volumes:
-      - airbyte_db_volume:/var/lib/postgresql/data
-    restart: unless-stopped
-
-  airbyte-server:
-    image: airbyte/server:2.0.1-alpha-4c590eb
-    container_name: airbyte-server
-    ports:
-      - "8000:8000"
-    volumes:
-      - airbyte_data:/data
-    restart: unless-stopped
-    depends_on:
-      - airbyte-db
-
-volumes:
-  postgres-db-volume:
-  airbyte_data:
-  airbyte_db_volume:
