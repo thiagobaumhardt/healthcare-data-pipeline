@@ -1,3 +1,3 @@
-module "bigquery_dev" {
-  source = "./modules/envs/dev/bigquery"
+module "gcp" {
+  source = "./modules/gcp"
 }
